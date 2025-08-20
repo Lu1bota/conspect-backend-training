@@ -14,10 +14,19 @@ import {
   updateStudentSchema,
 } from '../validation/students.js';
 import { isValidId } from '../middlewares/isValidId.js';
+import { authenticate } from '../middlewares/authenticate.js';
+import { checkRoles } from '../middlewares/checkRoles.js';
+import { ROLES } from '../constants/index.js';
 
 const studentsRouter = Router();
 
-studentsRouter.get('/', ctrlWrapper(getStudentsController));
+studentsRouter.use(authenticate);
+
+studentsRouter.get(
+  '/',
+  checkRoles(ROLES.TEACHER),
+  ctrlWrapper(getStudentsController),
+);
 
 studentsRouter.get(
   '/:studentId',
